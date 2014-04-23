@@ -57,7 +57,7 @@ cdef class device:
       '''Set the nonblocking flag'''
       return hid_set_nonblocking(self._c_hid, v)
 
-  def read(self, max_length):
+  def read_timeout(self, max_length, timeout_milliseconds):
       '''Return a list of integers (0-255) from the device up to max_length bytes.'''
       cdef unsigned char lbuff[16]
       cdef unsigned char* cbuff
@@ -65,13 +65,17 @@ cdef class device:
           cbuff = lbuff
       else:
           cbuff = <unsigned char *>malloc(max_length)
-      n = hid_read(self._c_hid, cbuff, max_length)
+      n = hid_read_timeout(self._c_hid, cbuff, max_length, timeout_milliseconds)
+      #n = hid_read(self._c_hid, cbuff, max_length)
       res = []
       for i in range(n):
           res.append(cbuff[i])
       if max_length > 16:
           free(cbuff)
       return res
+
+  def read(self, max_length):
+      return self.read_timeout(self, max_length, -1)
 
   def get_manufacturer_string(self):
       cdef wchar_t buff[255]

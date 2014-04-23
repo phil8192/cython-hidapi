@@ -24,6 +24,7 @@ cdef extern from "hidapi.h":
   hid_device* hid_open_path(char *path)
   void hid_close(hid_device *)
   int hid_write(hid_device* device, unsigned char *data, int length)
+  int hid_read_timeout(hid_device *device, unsigned char *data, int max_length, int timeout_milliseconds)  
   int hid_read(hid_device* device, unsigned char* data, int max_length)
   int hid_set_nonblocking(hid_device* device, int value)
   int hid_send_feature_report(hid_device* device, unsigned char *data, int length)
